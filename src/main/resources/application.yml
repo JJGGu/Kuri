@@ -1,0 +1,91 @@
+spring:
+  application:
+    name: Kuri
+  ai:
+    dashscope:
+      api-key: sk-402663c949e84e688ca03f6a627f5aed
+    alibaba:
+      mcp:
+        nacos:
+          namespace: 4ad3108b-4d44-43d0-9634-3c1ac4850c8c
+          server-addr: 127.0.0.1:8848
+          username: nacos
+          password: nacos
+          client:
+            enabled: true
+            sse:
+              connections:
+                server1:
+                  service-name: webflux-mcp-server
+                  version: 1.0.0
+    mcp:
+      client:
+        enabled: true
+        name: mcp-client-webflux
+        version: 0.0.1
+        initialized: true
+        request-timeout: 600s
+
+        nacos-enabled: true
+
+        type: sync
+        toolcallback:
+          enabled: true
+        root-change-notification: true
+  jackson:
+    time-zone: Asia/Shanghai
+    date-format: yyyy-MM-dd HH:mm:ss
+    serialization:
+      write-dates-as-timestamps: false
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+    session:
+      timeout: 30m
+      cookie:
+        http-only: true
+        secure: true
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=500,expireAfterWrite=600s
+
+logging:
+  level:
+    root: INFO
+    com.kuri: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/kuri.log
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 30
+
+nacos:
+  logging:
+    path: logs/nacos
+    level: INFO
+    default:
+      config:
+        enabled: false
+        path: logs/nacos/config.log
+      naming:
+        enabled: false
+        path: logs/nacos/naming.log
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when_authorized
+  health:
+    db:
+      enabled: true
+    diskspace:
+      enabled: true 
