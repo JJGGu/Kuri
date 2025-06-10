@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kuri.backend.location.mapper.LocationMapper">
+    
+    <!-- 结果映射 -->
+    <resultMap id="BaseResultMap" type="com.kuri.backend.location.model.Location">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="type" property="type"/>
+        <result column="description" property="description"/>
+        <result column="address" property="address"/>
+        <result column="longitude" property="longitude"/>
+        <result column="latitude" property="latitude"/>
+        <result column="city" property="city"/>
+        <result column="province" property="province"/>
+        <result column="country" property="country"/>
+        <result column="postal_code" property="postalCode"/>
+        <result column="phone" property="phone"/>
+        <result column="website" property="website"/>
+        <result column="opening_hours" property="openingHours"/>
+        <result column="rating" property="rating"/>
+        <result column="rating_count" property="ratingCount"/>
+        <result column="image_url" property="imageUrl"/>
+        <result column="status" property="status"/>
+        <result column="deleted" property="deleted"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+    
+    <!-- 基础列 -->
+    <sql id="Base_Column_List">
+        id, name, type, description, address, longitude, latitude, city, province, country,
+        postal_code, phone, website, opening_hours, rating, rating_count, image_url, status,
+        deleted, create_time, update_time
+    </sql>
+    
+    <!-- 根据ID查询位置 -->
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM location
+        WHERE id = #{id} AND deleted = 0
+    </select>
+    
+    <!-- 根据条件查询位置列表 -->
+    <select id="selectByCondition" parameterType="java.util.Map" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM location
+        <where>
+            deleted = 0
+            <if test="name != null and name != ''">
+                AND name LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="type != null">
+                AND type = #{type}
+            </if>
+            <if test="city != null and city != ''">
+                AND city = #{city}
+            </if>
+            <if test="province != null and province != ''">
+                AND province = #{province}
+            </if>
+            <if test="country != null and country != ''">
+                AND country = #{country}
+            </if>
+            <if test="minRating != null">
+                AND rating >= #{minRating}
+            </if>
+        </where>
+    </select>
+    
+    <!-- 根据类型查询位置列表 -->
+    <select id="selectByType" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM location
+        WHERE type = #{type} AND deleted = 0
+    </select>
+    
+    <!-- 根据城市查询位置列表 -->
+    <select id="selectByCity" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM location
+        WHERE city = #{city} AND deleted = 0
+    </select>
+    
+    <!-- 查询所有位置 -->
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM location
+        WHERE deleted = 0
+    </select>
+    
+    <!-- 插入位置 -->
+    <insert id="insert" parameterType="com.kuri.backend.location.model.Location" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO location (
+            name, type, description, address, longitude, latitude, city, province, country,
+            postal_code, phone, website, opening_hours, rating, rating_count, image_url, status,
+            deleted, create_time, update_time
+        ) VALUES (
+            #{name}, #{type}, #{description}, #{address}, #{longitude}, #{latitude}, #{city},
+            #{province}, #{country}, #{postalCode}, #{phone}, #{website}, #{openingHours},
+            #{rating}, #{ratingCount}, #{imageUrl}, #{status}, #{deleted}, #{createTime}, #{updateTime}
+        )
+    </insert>
+    
+    <!-- 更新位置 -->
+    <update id="update" parameterType="com.kuri.backend.location.model.Location">
+        UPDATE location
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="longitude != null">longitude = #{longitude},</if>
+            <if test="latitude != null">latitude = #{latitude},</if>
+            <if test="city != null">city = #{city},</if>
+            <if test="province != null">province = #{province},</if>
+            <if test="country != null">country = #{country},</if>
+            <if test="postalCode != null">postal_code = #{postalCode},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="website != null">website = #{website},</if>
+            <if test="openingHours != null">opening_hours = #{openingHours},</if>
+            <if test="rating != null">rating = #{rating},</if>
+            <if test="ratingCount != null">rating_count = #{ratingCount},</if>
+            <if test="imageUrl != null">image_url = #{imageUrl},</if>
+            <if test="status != null">status = #{status},</if>
+            update_time = #{updateTime}
+        </set>
+        WHERE id = #{id} AND deleted = 0
+    </update>
+    
+    <!-- 删除位置 -->
+    <update id="deleteById">
+        UPDATE location
+        SET deleted = 1, update_time = NOW()
+        WHERE id = #{id} AND deleted = 0
+    </update>
+</mapper> 
